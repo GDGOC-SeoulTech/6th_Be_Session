@@ -24,10 +24,13 @@ GDGoC SeoulTech 6기 BE Session. 백엔드 파트 정기 세션 자료와 멤버
 | 항목 | 버전 |
 | --- | --- |
 | Java | 17 |
-| Spring Boot | 3.5.3 |
+| Spring Boot | 4.1.1 |
 | Gradle | 8.14.3 (Wrapper 포함) |
-| DB | H2 (in-memory) |
+| DB | MySQL (`gdg_board`), 테스트는 H2 |
+| 라이브러리 | Spring Web MVC, Spring Data JPA, Lombok |
 | 기본 패키지 | `com.gdgoc.board` |
+
+모든 멤버가 같은 코드에서 출발하도록 `main`에는 **직전 세션까지 완성된 코드**와 이번 세션에서 작성할 자리를 표시한 `// TODO [세션 XX · 번호]` 주석이 들어 있습니다. 번호는 Notion 세션 자료의 목차 번호와 같습니다.
 
 ## 시작하기
 
@@ -38,14 +41,17 @@ git switch yeonghong      # 본인 브랜치 (mingyu / chanhaeng)
 ```
 
 1. IntelliJ에서 레포 폴더를 Open 합니다. (Gradle 프로젝트로 자동 인식됩니다)
-2. `BoardApplication`을 실행하고 http://localhost:8080/h2-console 이 열리면 준비 완료입니다.
-   - JDBC URL: `jdbc:h2:mem:board` / User: `sa` / Password: (비워 두기)
+   - "Enable annotation processing" 알림이 뜨면 **Enable** (Lombok)
+2. MySQL에 `gdg_board` 데이터베이스를 준비합니다. → `CREATE DATABASE gdg_board;`
+3. **Edit Configurations** → `BoardApplication` → **Environment variables**에 `DB_USERNAME=root;DB_PASSWORD=본인비밀번호`
+4. `BoardApplication`을 실행하고 `GET http://localhost:8080/posts` 가 `[]`를 돌려주면 준비 완료입니다.
 
-터미널에서 빌드·실행하려면:
+> DB 비밀번호는 절대 `application.yml`에 직접 적지 마세요. 환경변수로만 넣습니다.
+
+터미널에서 빌드·테스트하려면 (테스트는 H2를 쓰므로 MySQL 없이도 돌아갑니다):
 
 ```bash
 ./gradlew build      # Windows: .\gradlew.bat build
-./gradlew bootRun
 ```
 
 ## 과제 진행 방법
@@ -75,7 +81,10 @@ git switch yeonghong      # 본인 브랜치 (mingyu / chanhaeng)
 과제 마감 후에는 다른 멤버의 구현이나 예시 코드와 비교해 보세요.
 
 ```bash
-git fetch origin
+git fetch origin --tags
+
+# 이번 세션에서 내가 작성한 코드만 보기 (세션 시작 지점 태그와 비교)
+git diff session03-start origin/yeonghong -- src
 
 # 다른 멤버와 비교
 git diff origin/yeonghong origin/mingyu -- src

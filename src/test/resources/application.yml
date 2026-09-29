@@ -1,0 +1,9 @@
+# 테스트(GitHub Actions 포함)는 MySQL 없이 돌 수 있도록 메모리 DB(H2)를 사용합니다.
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop

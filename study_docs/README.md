@@ -21,8 +21,9 @@
 ```
 study_docs/
 └── sessionXX/
-    └── README.md    # 세션 자료 링크, 과제 범위, API 명세, 체크리스트, 제출 방법
+    └── README.md    # Notion 자료 링크, 단계별 체크포인트(파일·TODO 위치·확인 방법), 과제, 제출 방법
 ```
 
 - 세션 03부터 멤버들은 본인 브랜치(`yeonghong`, `mingyu`, `chanhaeng`)의 프로젝트를 **계속 이어서** 구현합니다.
-- API 명세(URL·요청·응답 형태)는 멤버 간 비교가 가능하도록 세션 README에 고정해 둡니다. 내부 구현 방식은 자유입니다.
+- 코드 원문은 Notion 세션 자료에만 두고, 세션 README는 "어느 파일의 어느 TODO에 쓰고 어떻게 확인하는지"만 안내합니다.
+- 세션 시작 지점마다 `sessionXX-start` 태그를 답니다. → `git diff session03-start origin/본인브랜치 -- src`
