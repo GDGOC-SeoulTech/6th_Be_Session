@@ -9,13 +9,19 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+	}
+	// 미리 다운로드만 합니다. 실제 Swagger 기능은 TODO 6에서 추가합니다.
+	session03Preparation {
+		canBeConsumed = false
+		canBeResolved = true
+		extendsFrom implementation, runtimeOnly
 	}
 }
 
@@ -31,6 +37,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// TODO [세션 03 · 6] Swagger 의존성 추가
+	// implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
+	// 위 줄의 주석을 해제한 뒤 Gradle을 새로고침합니다.
+
+	session03Preparation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'com.h2database:h2'
@@ -39,4 +49,14 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('prepareSession') {
+	group = 'verification'
+	description = '세션 시작 전에 빌드·테스트하고 Swagger 라이브러리를 미리 받습니다.'
+	dependsOn tasks.named('build')
+	doLast {
+		configurations.session03Preparation.resolve()
+		logger.lifecycle('사전 빌드·테스트와 라이브러리 다운로드 완료. MySQL 실행과 POST/GET 확인은 별도로 진행하세요.')
+	}
 }

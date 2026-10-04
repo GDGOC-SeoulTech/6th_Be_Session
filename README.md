@@ -23,10 +23,10 @@ GDGoC SeoulTech 6기 BE Session. 백엔드 파트 정기 세션 자료와 멤버
 
 | 항목 | 버전 |
 | --- | --- |
-| Java | 17 |
+| Java | 21 |
 | Spring Boot | 4.1.1 |
 | Gradle | 8.14.3 (Wrapper 포함) |
-| DB | MySQL (`gdg_board`), 테스트는 H2 |
+| DB | MySQL 8.4 LTS (`gdg_board`), 테스트는 H2 |
 | 라이브러리 | Spring Web MVC, Spring Data JPA, Lombok |
 | 기본 패키지 | `com.gdgoc.board` |
 
@@ -35,16 +35,18 @@ GDGoC SeoulTech 6기 BE Session. 백엔드 파트 정기 세션 자료와 멤버
 ## 시작하기
 
 ```bash
-git clone <레포 주소>
-cd GDGoC_BE
+git clone https://github.com/GDGOC-SeoulTech/6th_Be_Session.git
+cd 6th_Be_Session
 git switch yeonghong      # 본인 브랜치 (mingyu / chanhaeng)
+git merge origin/main    # 최신 수업 자료를 본인 브랜치로 가져옵니다
 ```
 
 1. IntelliJ에서 레포 폴더를 Open 합니다. (Gradle 프로젝트로 자동 인식됩니다)
    - "Enable annotation processing" 알림이 뜨면 **Enable** (Lombok)
-2. MySQL에 `gdg_board` 데이터베이스를 준비합니다. → `CREATE DATABASE gdg_board;`
+   - Project SDK와 Gradle JVM을 **JDK 21**로 맞춥니다. JDK가 없으면 IntelliJ의 Download JDK에서 21을 설치합니다.
+2. [MySQL 설치·접속 가이드](./study_docs/setup/MYSQL.md)를 따라 MySQL 8.4 LTS를 준비합니다.
 3. **Edit Configurations** → `BoardApplication` → **Environment variables**에 `DB_USERNAME=root;DB_PASSWORD=본인비밀번호`
-4. `BoardApplication`을 실행하고 `GET http://localhost:8080/posts` 가 `[]`를 돌려주면 준비 완료입니다.
+4. [세션 03 STEP 0](./study_docs/session03/README.md#step-0-준비-세션-시작-전)을 따라 DB를 초기화하고 게시글 1·2·3을 준비합니다. POST 201과 GET 200을 모두 확인하면 준비 완료입니다.
 
 > DB 비밀번호는 절대 `application.yml`에 직접 적지 마세요. 환경변수로만 넣습니다.
 
@@ -54,12 +56,15 @@ git switch yeonghong      # 본인 브랜치 (mingyu / chanhaeng)
 ./gradlew build      # Windows: .\gradlew.bat build
 ```
 
+세션 03 전에는 `./gradlew prepareSession`(Windows: `.\gradlew.bat prepareSession`)을 실행하세요. 빌드·테스트와 Swagger 라이브러리 다운로드를 미리 끝냅니다. 실제 MySQL 연결과 API 요청은 [STEP 0](./study_docs/session03/README.md#step-0-준비-세션-시작-전)에서 별도로 확인합니다.
+
 ## 과제 진행 방법
 
 1. 세션이 끝나면 `main`에 새 과제 명세가 올라옵니다. 본인 브랜치로 가져옵니다.
    ```bash
    git switch yeonghong
-   git pull origin main
+   git fetch origin
+   git merge origin/main
    ```
 2. [`study_docs/sessionXX/README.md`](./study_docs)의 과제 명세를 보고 구현합니다.
 3. 커밋 메시지 앞에 세션 번호를 붙입니다. → `[session03] 게시글 수정 API 구현`
