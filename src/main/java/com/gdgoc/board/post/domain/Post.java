@@ -30,5 +30,8 @@ public class Post extends BaseEntity {
         this.content = content;
     }
 
-    // TODO [세션 03 · 3-2] 게시글 수정 메서드 update(title, content)
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

@@ -36,11 +36,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// TODO [세션 03 · 6] Swagger 의존성 추가
-	// implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
-	// 위 줄의 주석을 해제한 뒤 Gradle을 새로고침합니다.
-
-	session03Preparation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'com.h2database:h2'
