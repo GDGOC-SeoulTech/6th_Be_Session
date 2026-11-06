@@ -16,6 +16,7 @@ out/
 
 ### VS Code ###
 .vscode/
+/bin/
 
 ### 로컬 설정 · 비밀값 (세션 06 JWT secret 등) ###
 .env

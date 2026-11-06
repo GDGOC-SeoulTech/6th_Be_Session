@@ -1,10 +1,15 @@
 package com.gdgoc.board.post.controller;
 
 import com.gdgoc.board.post.dto.PostCreateRequest;
+import com.gdgoc.board.post.dto.PostPageResponse;
 import com.gdgoc.board.post.dto.PostResponse;
 import com.gdgoc.board.post.dto.PostUpdateRequest;
 import com.gdgoc.board.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,10 +37,11 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // TODO [세션 04 · 4-2] 기존 findAll() 수정: @PageableDefault + @ParameterObject Pageable 을 받아 PostPageResponse 반환
     @GetMapping
-    public ResponseEntity<List<PostResponse>> findAll() {
-        return ResponseEntity.ok(postService.findAll());
+    public ResponseEntity<PostPageResponse> findAll(
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(postService.findAll(pageable));
     }
 
     @GetMapping("/{postId}")
@@ -53,6 +59,11 @@ public class PostController {
     public ResponseEntity<Void> delete(@PathVariable Long postId) {
         postService.delete(postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<PostResponse> like(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.like(postId));
     }
 
     @GetMapping("/search")
