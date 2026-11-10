@@ -1,8 +1,14 @@
 package com.gdgoc.board.comment.controller;
 
+import com.gdgoc.board.comment.dto.CommentCreateRequest;
+import com.gdgoc.board.comment.dto.CommentResponse;
 import com.gdgoc.board.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -10,7 +16,22 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // TODO [세션 04 · 3-4] 댓글 작성 POST /posts/{postId}/comments, 목록 GET /posts/{postId}/comments, 삭제 DELETE /comments/{commentId}
+    @PostMapping("/posts/{postId}/comments")
+    public ResponseEntity<CommentResponse> create(@PathVariable Long postId,
+                                                  @RequestBody CommentCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(postId, request));
+    }
 
-    // TODO [세션 04 · 5-3] 전체 댓글 조회 API: GET /comments
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity<List<CommentResponse>> findByPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(commentService.findByPost(postId));
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<Void> delete(@PathVariable Long commentId) {
+        commentService.delete(commentId);
+        return ResponseEntity.noContent().build();
+    }
 }
+    // TODO [세션 04 · 5-3] 전체 댓글 조회 API: GET /comments
+

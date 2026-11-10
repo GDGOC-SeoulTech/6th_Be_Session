@@ -1,11 +1,15 @@
 package com.gdgoc.board.post.service;
 
+import com.gdgoc.board.comment.repository.CommentRepository;
 import com.gdgoc.board.post.domain.Post;
 import com.gdgoc.board.post.dto.PostCreateRequest;
+import com.gdgoc.board.post.dto.PostPageResponse;
 import com.gdgoc.board.post.dto.PostResponse;
 import com.gdgoc.board.post.dto.PostUpdateRequest;
 import com.gdgoc.board.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +23,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     // TODO [세션 04 · 3-5] 필드 추가: private final CommentRepository commentRepository;
-
+    private final CommentRepository commentRepository;
     @Transactional
     public PostResponse create(PostCreateRequest request) {
         Post post = postRepository.save(request.toEntity());
@@ -27,10 +31,9 @@ public class PostService {
     }
 
     // TODO [세션 04 · 4-2] 기존 findAll() 수정: Pageable 을 받아 PostPageResponse 반환 (PostPageResponse 는 dto 새 파일)
-    public List<PostResponse> findAll() {
-        return postRepository.findAll().stream()
-                .map(PostResponse::from)
-                .toList();
+    public PostPageResponse findAll(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAll(pageable);
+        return PostPageResponse.from(postPage);
     }
 
     public PostResponse findById(Long postId) {
@@ -47,8 +50,10 @@ public class PostService {
     // TODO [세션 04 · 3-5] 기존 delete() 수정: 게시글을 지우기 전에 commentRepository.deleteByPostId(postId) 호출
     @Transactional
     public void delete(Long postId) {
-        Post post = getPost(postId);
-        postRepository.delete(post);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + postId));
+        commentRepository.deleteByPostId(postId);   // 댓글 먼저
+        postRepository.delete(post);                // 그다음 게시글
     }
 
     public List<PostResponse> search(String keyword) {
