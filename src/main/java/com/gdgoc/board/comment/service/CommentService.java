@@ -6,6 +6,8 @@ import com.gdgoc.board.comment.dto.CommentPageResponse;
 import com.gdgoc.board.comment.dto.CommentResponse;
 import com.gdgoc.board.comment.dto.CommentWithPostResponse;
 import com.gdgoc.board.comment.repository.CommentRepository;
+import com.gdgoc.board.global.exception.CustomException;
+import com.gdgoc.board.global.exception.ErrorCode;
 import com.gdgoc.board.post.domain.Post;
 import com.gdgoc.board.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +25,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    // TODO [세션 05 · 4-3] IllegalArgumentException → new CustomException(ErrorCode.POST_NOT_FOUND)
     @Transactional
     public CommentResponse create(Long postId, CommentCreateRequest request) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + postId));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         Comment comment = commentRepository.save(new Comment(request.content(), post));
         return CommentResponse.from(comment);
     }
@@ -36,11 +37,10 @@ public class CommentService {
         return CommentPageResponse.from(commentRepository.findByPostId(postId, pageable));
     }
 
-    // TODO [세션 05 · 4-3] IllegalArgumentException → new CustomException(ErrorCode.COMMENT_NOT_FOUND)
     @Transactional
     public void delete(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 없습니다. id=" + commentId));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         commentRepository.delete(comment);
     }
 

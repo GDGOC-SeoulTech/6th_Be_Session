@@ -1,10 +1,12 @@
 package com.gdgoc.board.post.controller;
 
+import com.gdgoc.board.global.common.ApiResponse;
 import com.gdgoc.board.post.dto.PostCreateRequest;
 import com.gdgoc.board.post.dto.PostPageResponse;
 import com.gdgoc.board.post.dto.PostResponse;
 import com.gdgoc.board.post.dto.PostUpdateRequest;
 import com.gdgoc.board.post.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -31,31 +33,27 @@ public class PostController {
 
     private final PostService postService;
 
-    // TODO [세션 05 · 3-3] create() · update() 의 @RequestBody 앞에 @Valid 추가
-    // TODO [세션 05 · 4-4] delete() 를 제외한 모든 메서드의 반환 타입을 ApiResponse 로 감싸기
-
     @PostMapping
-    public ResponseEntity<PostResponse> create(@RequestBody PostCreateRequest request) {
-        PostResponse response = postService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ApiResponse<PostResponse>> create(@Valid @RequestBody PostCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(postService.create(request)));
     }
 
     @GetMapping
-    public ResponseEntity<PostPageResponse> findAll(
+    public ResponseEntity<ApiResponse<PostPageResponse>> findAll(
             @ParameterObject
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(postService.findAll(pageable));
+        return ResponseEntity.ok(ApiResponse.ok(postService.findAll(pageable)));
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> findById(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.findById(postId));
+    public ResponseEntity<ApiResponse<PostResponse>> findById(@PathVariable Long postId) {
+        return ResponseEntity.ok(ApiResponse.ok(postService.findById(postId)));
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<PostResponse> update(@PathVariable Long postId,
-                                               @RequestBody PostUpdateRequest request) {
-        return ResponseEntity.ok(postService.update(postId, request));
+    public ResponseEntity<ApiResponse<PostResponse>> update(@PathVariable Long postId,
+                                                            @Valid @RequestBody PostUpdateRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok(postService.update(postId, request)));
     }
 
     @DeleteMapping("/{postId}")
@@ -64,13 +62,13 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{postId}/like")
-    public ResponseEntity<PostResponse> like(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.like(postId));
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<PostResponse>>> search(@RequestParam String keyword) {
+        return ResponseEntity.ok(ApiResponse.ok(postService.search(keyword)));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<PostResponse>> search(@RequestParam String keyword) {
-        return ResponseEntity.ok(postService.search(keyword));
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<ApiResponse<PostResponse>> like(@PathVariable Long postId) {
+        return ResponseEntity.ok(ApiResponse.ok(postService.like(postId)));
     }
 }

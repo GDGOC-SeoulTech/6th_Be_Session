@@ -1,6 +1,8 @@
 package com.gdgoc.board.post.service;
 
 import com.gdgoc.board.comment.repository.CommentRepository;
+import com.gdgoc.board.global.exception.CustomException;
+import com.gdgoc.board.global.exception.ErrorCode;
 import com.gdgoc.board.post.domain.Post;
 import com.gdgoc.board.post.dto.PostCreateRequest;
 import com.gdgoc.board.post.dto.PostPageResponse;
@@ -64,9 +66,8 @@ public class PostService {
         return PostResponse.from(post);
     }
 
-    // TODO [세션 05 · 4-3] IllegalArgumentException → new CustomException(ErrorCode.POST_NOT_FOUND)
     private Post getPost(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + postId));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
 }

@@ -5,6 +5,8 @@ import com.gdgoc.board.comment.dto.CommentPageResponse;
 import com.gdgoc.board.comment.dto.CommentResponse;
 import com.gdgoc.board.comment.dto.CommentWithPostResponse;
 import com.gdgoc.board.comment.service.CommentService;
+import com.gdgoc.board.global.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -27,21 +29,18 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // TODO [세션 05 · 3-3] create() 의 @RequestBody 앞에 @Valid 추가
-    // TODO [세션 05 · 4-4] delete() 를 제외한 모든 메서드의 반환 타입을 ApiResponse 로 감싸기
-
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommentResponse> create(@PathVariable Long postId,
-                                                  @RequestBody CommentCreateRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(postId, request));
+    public ResponseEntity<ApiResponse<CommentResponse>> create(@PathVariable Long postId,
+                                                               @Valid @RequestBody CommentCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(commentService.create(postId, request)));
     }
 
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommentPageResponse> findByPost(
+    public ResponseEntity<ApiResponse<CommentPageResponse>> findByPost(
             @PathVariable Long postId,
             @ParameterObject
             @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(commentService.findByPost(postId, pageable));
+        return ResponseEntity.ok(ApiResponse.ok(commentService.findByPost(postId, pageable)));
     }
 
     @DeleteMapping("/comments/{commentId}")
@@ -51,7 +50,7 @@ public class CommentController {
     }
 
     @GetMapping("/comments")
-    public ResponseEntity<List<CommentWithPostResponse>> findAllWithPost() {
-        return ResponseEntity.ok(commentService.findAllWithPost());
+    public ResponseEntity<ApiResponse<List<CommentWithPostResponse>>> findAllWithPost() {
+        return ResponseEntity.ok(ApiResponse.ok(commentService.findAllWithPost()));
     }
 }
