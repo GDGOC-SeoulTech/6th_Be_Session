@@ -2,12 +2,14 @@ package com.gdgoc.board.comment.service;
 
 import com.gdgoc.board.comment.domain.Comment;
 import com.gdgoc.board.comment.dto.CommentCreateRequest;
+import com.gdgoc.board.comment.dto.CommentPageResponse;
 import com.gdgoc.board.comment.dto.CommentResponse;
 import com.gdgoc.board.comment.dto.CommentWithPostResponse;
 import com.gdgoc.board.comment.repository.CommentRepository;
 import com.gdgoc.board.post.domain.Post;
 import com.gdgoc.board.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +33,8 @@ public class CommentService {
         return CommentResponse.from(comment);
     }
 
-    public List<CommentResponse> findByPost(Long postId) {
-        return commentRepository.findByPostId(postId).stream()
-                .map(CommentResponse::from)
-                .toList();
+    public CommentPageResponse findByPost(Long postId, Pageable pageable) {
+        return CommentPageResponse.from(commentRepository.findByPostId(postId, pageable));
     }
 
     @Transactional
