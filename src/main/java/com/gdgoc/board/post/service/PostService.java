@@ -1,11 +1,14 @@
 package com.gdgoc.board.post.service;
 
+import com.gdgoc.board.comment.repository.CommentRepository;
 import com.gdgoc.board.post.domain.Post;
 import com.gdgoc.board.post.dto.PostCreateRequest;
+import com.gdgoc.board.post.dto.PostPageResponse;
 import com.gdgoc.board.post.dto.PostResponse;
 import com.gdgoc.board.post.dto.PostUpdateRequest;
 import com.gdgoc.board.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +21,7 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    // TODO [세션 04 · 3-5] 필드 추가: private final CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public PostResponse create(PostCreateRequest request) {
@@ -26,11 +29,8 @@ public class PostService {
         return PostResponse.from(post);
     }
 
-    // TODO [세션 04 · 4-2] 기존 findAll() 수정: Pageable 을 받아 PostPageResponse 반환 (PostPageResponse 는 dto 새 파일)
-    public List<PostResponse> findAll() {
-        return postRepository.findAll().stream()
-                .map(PostResponse::from)
-                .toList();
+    public PostPageResponse findAll(Pageable pageable) {
+        return PostPageResponse.from(postRepository.findAll(pageable));
     }
 
     public PostResponse findById(Long postId) {
@@ -44,10 +44,10 @@ public class PostService {
         return PostResponse.from(post);
     }
 
-    // TODO [세션 04 · 3-5] 기존 delete() 수정: 게시글을 지우기 전에 commentRepository.deleteByPostId(postId) 호출
     @Transactional
     public void delete(Long postId) {
         Post post = getPost(postId);
+        commentRepository.deleteByPostId(postId);
         postRepository.delete(post);
     }
 
@@ -57,6 +57,14 @@ public class PostService {
                 .toList();
     }
 
+    @Transactional
+    public PostResponse like(Long postId) {
+        Post post = getPost(postId);
+        post.like();
+        return PostResponse.from(post);
+    }
+
+    // TODO [세션 05 · 4-3] IllegalArgumentException → new CustomException(ErrorCode.POST_NOT_FOUND)
     private Post getPost(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + postId));

@@ -25,6 +25,9 @@ public class Post extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false)
+    private int likeCount = 0;
+
     public Post(String title, String content) {
         this.title = title;
         this.content = content;
@@ -33,5 +36,9 @@ public class Post extends BaseEntity {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void like() {
+        this.likeCount++;
     }
 }
